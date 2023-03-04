@@ -67,10 +67,11 @@ model VerificationToken {
 }
 
 model ToDoLists {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    title     String
-    user      User     @relation(fields: [userId], references: [id])
-    userId    String
+    id          String   @id @default(cuid())
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    title       String
+    user        User     @relation(fields: [userId], references: [id])
+    userId      String
+    isCompleted Boolean  @default(false)
 }
