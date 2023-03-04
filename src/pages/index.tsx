@@ -1,9 +1,31 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import NavBar from "./navBar";
+import { ChangeEvent, useState } from "react";
+
+import { useSession } from "next-auth/react";
+
+import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const { data: session } = useSession();
+
+  const mutation = api.todo.create.useMutation();
+
+  const [title, setTitle] = useState("");
+
+  const titleListener = (e: ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
+
+  const handleCreate = async (event: unknown) => {
+    event.preventDefault();
+    await mutation.mutateAsync({
+      title: title,
+      id: session?.user.id as string,
+    });
+  };
 
   return (
     <>
@@ -22,17 +44,19 @@ const Home: NextPage = () => {
 
         <div className="flex flex-col items-center justify-center py-14">
           <div className="flex w-full max-w-md flex-col items-center justify-center space-y-4 rounded-lg bg-white bg-opacity-10 px-4 py-6 shadow-xl backdrop-blur-md">
-            <h1 className="text-2xl font-semibold text-white">
+            <h2 className="text-2xl font-semibold text-white">
               Create a new todo
-            </h1>
+            </h2>
             <input
               className="focus:shadow-outline w-full rounded-lg bg-white px-4 py-2 text-gray-700 focus:outline-none"
               type="text"
               placeholder="Enter your todo"
+              onChange={titleListener}
             />
             <button
               className="w-full rounded-lg bg-[hsl(280,100%,70%)] px-4 py-2 font-semibold text-white hover:bg-[hsl(280,100%,60%)]"
-              type="button"
+              type="submit"
+              onClick={handleCreate}
             >
               Create
             </button>
